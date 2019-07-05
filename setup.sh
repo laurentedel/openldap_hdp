@@ -28,6 +28,18 @@ echo -e "\n####  Installing OpenLDAP with the following args:
 #echo -e "\n####  Installing the EPEL repo"
 #cd /tmp && wget http://download.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm && rpm -ivh epel-release-6-8.noarch.rpm
 
+#
+# Install AMBARI first
+#
+
+echo -e "\n####  Installing and configuring Ambari"
+wget -nv http://public-repo-1.hortonworks.com/ambari/centos7/2.x/updates/2.6.2.2/ambari.repo -O /etc/yum.repos.d/ambari.repo
+yum install -y -q ambari-server
+yum install -y -q chrony && systemctl start chronyd && systemctl enable chronyd
+ssh -o StrictHostKeyChecking=no c430-node2 'yum install -y -q chrony && systemctl start chronyd && systemctl enable chronyd'
+ambari-server setup -s
+
+echo -e "\n####  Installing openLDAP and openSSL"
 yum install *openldap* openssl -y -q
 
 #
@@ -35,7 +47,6 @@ yum install *openldap* openssl -y -q
 #
 echo -e "\n####  Enabling slapd to start on boot"
 chkconfig --level 2345 slapd on
-
 
 #
 # Enabling logging
@@ -282,7 +293,9 @@ ldapadd -D cn=$LDAP_ADMIN_USER,$LDAP_DOMAIN -w $LDAP_PASSWORD -f $LDAP_LDIF_DIR/
 #
 # Configure Ambari
 #
-
+echo -e "\n####  Configuring Ambari for LDAP"
+rm -rf /etc/ambari-server/conf/ldap_files
+mkdir -p /etc/ambari-server/conf/ldap_files/
 echo $LDAP_PASSWORD > /etc/ambari-server/conf/ldap-password.dat
 echo "ambari.ldap.isConfigured=true
 authentication.ldap.baseDn=$LDAP_DOMAIN
@@ -300,6 +313,22 @@ authentication.ldap.userObjectClass=inetOrgPerson
 authentication.ldap.usernameAttribute=uid
 client.security=ldap
 ldap.sync.username.collision.behavior=convert" >> /etc/ambari-server/conf/ambari.properties
+
+echo "dn: olcDatabase={2}bdb,cn=config
+changetype: modify
+replace: olcSuffix
+olcSuffix: $LDAP_DOMAIN
+
+dn: olcDatabase={2}bdb,cn=config
+changetype: modify
+replace: olcRootDN
+olcRootDN: cn=$LDAP_ADMIN_USER,$LDAP_DOMAIN
+
+dn: olcDatabase={2}bdb,cn=config
+changetype: modify
+replace: olcRootPW
+olcRootPW: $LDAP_PASSWORD" >> /etc/ambari-server/conf/ldap_files/modify_config.sh
+
 
 ambari-server start
 
