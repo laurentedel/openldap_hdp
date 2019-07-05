@@ -277,3 +277,70 @@ ldapadd -D cn=$LDAP_ADMIN_USER,$LDAP_DOMAIN -w $LDAP_PASSWORD -f $LDAP_LDIF_DIR/
 #
 echo -e "\n####  Adding the groups"
 ldapadd -D cn=$LDAP_ADMIN_USER,$LDAP_DOMAIN -w $LDAP_PASSWORD -f $LDAP_LDIF_DIR/groups.ldif
+
+
+#
+# Configure Ambari
+#
+
+echo $LDAP_PASSWORD > /etc/ambari-server/conf/ldap-password.dat
+echo "ambari.ldap.isConfigured=true
+authentication.ldap.baseDn=$LDAP_DOMAIN
+authentication.ldap.bindAnonymously=false
+authentication.ldap.dnAttribute=$LDAP_DOMAIN
+authentication.ldap.groupMembershipAttr=member
+authentication.ldap.groupNamingAttr=cn
+authentication.ldap.groupObjectClass=groupOfNames
+authentication.ldap.managerDn=cn=$LDAP_ADMIN_USER,$LDAP_DOMAIN
+authentication.ldap.managerPassword=/etc/ambari-server/conf/ldap-password.dat
+authentication.ldap.primaryUrl=`hostname -f`:389
+authentication.ldap.referral=ignore
+authentication.ldap.useSSL=false
+authentication.ldap.userObjectClass=inetOrgPerson
+authentication.ldap.usernameAttribute=uid
+client.security=ldap
+ldap.sync.username.collision.behavior=convert" >> /etc/ambari-server/conf/ambari.properties
+
+ambari-server start
+
+echo "sleeping 30s for ambari server to come online"
+sleep 30
+
+#
+# Synchronise all (users and groups) to Ambari
+#
+ambari-server sync-ldap --ldap-sync-admin-name=$LDAP_ADMIN_USER --ldap-sync-admin-password=$LDAP_PASSWORD --all
+
+
+#
+# Install NSLCD
+#
+
+yum install -y -q nss-pam-ldapd
+
+sed -i.bak -e 's/^uri.*/uri ldap:\/\/`hostname -f`/' /etc/nslcd.conf
+sed -i.bak -e 's/^base.*/base '$LDAP_DOMAIN'/' /etc/nslcd.conf
+sed -i.bak -e 's/^#base   group/base   group ou=Groups,'$LDAP_DOMAIN'/' /etc/nslcd.conf
+sed -i.bak -e 's/^#base   passwd/#base   passwd ou=Users,'$LDAP_DOMAIN'/' /etc/nslcd.conf
+echo "#Mappings Ambari
+filter passwd (objectClass=posixaccount) 
+map passwd uidNumber uidNumber 
+map passwd gidNumber gidNumber 
+filter group (objectClass=posixgroup) 
+uid nslcd 
+gid ldap" >> /etc/nslcd.conf
+
+sed -i.bak -e 's/^passwd.*/passwd: files ldap/' /etc/nsswitch.conf
+sed -i.bak -e 's/^shadow.*/shadow: files/' /etc/nsswitch.conf
+sed -i.bak -e 's/^group.*/group: files ldap/' /etc/nsswitch.conf
+
+service nslcd start
+chkconfig nslcd on
+
+#
+# Test NSLCD
+#
+id laurent
+
+echo "must be: uid=75000010(laurent) gid=75000014(sales) groups=75000014(sales),75000013(finance)"
+
