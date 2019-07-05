@@ -1,0 +1,37 @@
+dn: cn=finance,ou=Groups,dc=hortonworks,dc=com
+cn: finance
+objectclass: top
+objectclass: posixGroup
+objectclass: groupofnames
+gidNumber: 75000013
+member: uid=finance1,ou=Users,dc=hortonworks,dc=com
+member: uid=finance2,ou=Users,dc=hortonworks,dc=com
+member: uid=finance3,ou=Users,dc=hortonworks,dc=com
+member: uid=laurent,ou=Users,dc=hortonworks,dc=com
+
+dn: cn=sales,ou=Groups,dc=hortonworks,dc=com
+cn: sales
+objectclass: top
+objectclass: posixGroup
+objectclass: groupofnames
+gidNumber: 75000014
+member: uid=sales1,ou=Users,dc=hortonworks,dc=com
+member: uid=sales2,ou=Users,dc=hortonworks,dc=com
+member: uid=sales3,ou=Users,dc=hortonworks,dc=com
+member: uid=laurent,ou=Users,dc=hortonworks,dc=com
+member: uid=shane,ou=Users,dc=hortonworks,dc=com
+
+dn: cn=admins,ou=Groups,dc=hortonworks,dc=com
+cn: admins
+objectclass: top
+objectclass: posixGroup
+objectclass: groupofnames
+gidNumber: 75000015
+member: uid=hdfsuser,ou=Users,dc=hortonworks,dc=com
+member: uid=zookeeperuser,ou=Users,dc=hortonworks,dc=com
+member: uid=amsuser,ou=Users,dc=hortonworks,dc=com
+member: uid=ambari-qauser,ou=Users,dc=hortonworks,dc=com
+member: uid=yarnuser,ou=Users,dc=hortonworks,dc=com
+member: uid=mapreduser,ou=Users,dc=hortonworks,dc=com
+member: uid=activity_analyzeruser,ou=Users,dc=hortonworks,dc=com
+member: uid=knoxuser,ou=Users,dc=hortonworks,dc=com
