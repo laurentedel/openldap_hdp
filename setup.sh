@@ -49,23 +49,6 @@ echo -e "\n####  Enabling slapd to start on boot"
 chkconfig --level 2345 slapd on
 
 #
-# Enabling logging
-#
-echo -e "\n####  Enabling OpenLDAP logging"
-if [ ! -d "/var/log/slapd" ]; then
-    mkdir /var/log/slapd
-fi
-chmod 755 /var/log/slapd/
-chown ldap:ldap /var/log/slapd/
-sed -i "/local4.*/d" /etc/rsyslog.conf
-
-cat >> /etc/rsyslog.conf << EOF
-local4.*                        /var/log/slapd/slapd.log
-EOF
-service rsyslog restart
-
-
-#
 # Convert to rfc2307bis schema
 #
 echo -e "\n####  Converting to the rfc2307bis schema to support posixGroup and groupOfNames"
