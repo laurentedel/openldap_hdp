@@ -38,6 +38,7 @@ yum install -y -q ambari-server
 yum install -y -q chrony && systemctl start chronyd && systemctl enable chronyd
 ssh -o StrictHostKeyChecking=no c430-node2 'yum install -y -q chrony && systemctl start chronyd && systemctl enable chronyd'
 ambari-server setup -s
+ambari-server stop
 
 echo -e "\n####  Installing openLDAP and openSSL"
 yum install *openldap* openssl -y -q
@@ -353,6 +354,4 @@ chkconfig nslcd on
 # Test NSLCD
 #
 id laurent
-
 echo "must be: uid=75000010(laurent) gid=75000014(sales) groups=75000014(sales),75000013(finance)"
-
