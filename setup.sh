@@ -118,7 +118,8 @@ EOF
 
 # enable LDAPS
 echo -e "\n####  Enabling ldaps at start"
-sed -i 's|^SLAPD_LDAPS.*|SLAPD_LDAPS=yes|g' /etc/sysconfig/ldap
+sed -i.bak -e 's#^SLAPD_URLS="ldapi:/// ldap:///"#SLAPD_URLS="ldapi:/// ldap:/// ldaps:///"#' /etc/sysconfig/slapd
+#sed -i 's|^SLAPD_LDAPS.*|SLAPD_LDAPS=yes|g' /etc/sysconfig/ldap
 
 # disable client cert validation
 echo -e "\n####  Disabling client cert validation"
@@ -328,7 +329,7 @@ ambari-server sync-ldap --ldap-sync-admin-name=$LDAP_ADMIN_USER --ldap-sync-admi
 #
 # Install NSLCD
 #
-
+echo -e "\n####  Install and configure NSLCD"
 yum install -y -q nss-pam-ldapd
 
 sed -i.bak -e "s/^uri.*/uri ldap:\/\/`hostname -f`/" /etc/nslcd.conf
