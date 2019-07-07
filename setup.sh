@@ -333,8 +333,8 @@ yum install -y -q nss-pam-ldapd
 
 sed -i.bak -e "s/^uri.*/uri ldap:\/\/`hostname -f`/" /etc/nslcd.conf
 sed -i.bak -e "s/^base.*/base $LDAP_DOMAIN/" /etc/nslcd.conf
-sed -i.bak -e "s/^#base   group/base   group ou=Groups,$LDAP_DOMAIN/" /etc/nslcd.conf
-sed -i.bak -e "s/^#base   passwd/#base   passwd ou=Users,$LDAP_DOMAIN/" /etc/nslcd.conf
+sed -i.bak -e "s/^#base   group.*/base   group ou=Groups,$LDAP_DOMAIN/" /etc/nslcd.conf
+sed -i.bak -e "s/^#base   passwd.*/base   passwd ou=Users,$LDAP_DOMAIN/" /etc/nslcd.conf
 echo "#Mappings Ambari
 filter passwd (objectClass=posixaccount) 
 map passwd uidNumber uidNumber 
