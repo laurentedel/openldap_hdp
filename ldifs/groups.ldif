@@ -35,3 +35,68 @@ member: uid=yarnuser,ou=Users,dc=hortonworks,dc=com
 member: uid=mapreduser,ou=Users,dc=hortonworks,dc=com
 member: uid=activity_analyzeruser,ou=Users,dc=hortonworks,dc=com
 member: uid=knoxuser,ou=Users,dc=hortonworks,dc=com
+
+dn: cn=hadoop,ou=Groups,dc=hortonworks,dc=com
+cn: hadoop
+objectclass: top
+objectclass: posixGroup
+objectclass: groupofnames
+gidNumber: 70000001
+member: uid=hdfsuser,ou=Users,dc=hortonworks,dc=com
+member: uid=zookeeperuser,ou=Users,dc=hortonworks,dc=com
+member: uid=amsuser,ou=Users,dc=hortonworks,dc=com
+member: uid=ambari-qauser,ou=Users,dc=hortonworks,dc=com
+member: uid=yarnuser,ou=Users,dc=hortonworks,dc=com
+member: uid=mapreduser,ou=Users,dc=hortonworks,dc=com
+member: uid=activity_analyzeruser,ou=Users,dc=hortonworks,dc=com
+member: uid=knoxuser,ou=Users,dc=hortonworks,dc=com
+
+dn: cn=hdfs,ou=Groups,dc=hortonworks,dc=com
+cn: hdfs
+objectclass: top
+objectclass: posixGroup
+objectclass: groupofnames
+gidNumber: 70000002
+member: uid=hdfsuser,ou=Users,dc=hortonworks,dc=com
+
+dn: cn=users,ou=Groups,dc=hortonworks,dc=com
+cn: hadoop
+objectclass: top
+objectclass: posixGroup
+objectclass: groupofnames
+gidNumber: 70000003
+member: uid=laurent,ou=Users,dc=hortonworks,dc=com
+member: uid=tom,ou=Users,dc=hortonworks,dc=com
+
+dn: cn=zookeeper,ou=Groups,dc=hortonworks,dc=com
+cn: zookeeper
+objectclass: top
+objectclass: posixGroup
+objectclass: groupofnames
+gidNumber: 70000004
+member: uid=zookeeperuser,ou=Users,dc=hortonworks,dc=com
+
+dn: cn=yarn,ou=Groups,dc=hortonworks,dc=com
+cn: yarn
+objectclass: top
+objectclass: posixGroup
+objectclass: groupofnames
+gidNumber: 70000005
+member: uid=yarnuser,ou=Users,dc=hortonworks,dc=com
+
+dn: cn=mapred,ou=Groups,dc=hortonworks,dc=com
+cn: mapred
+objectclass: top
+objectclass: posixGroup
+objectclass: groupofnames
+gidNumber: 70000006
+member: uid=mapreduser,ou=Users,dc=hortonworks,dc=com
+
+dn: cn=knox,ou=Groups,dc=hortonworks,dc=com
+cn: knox
+objectclass: top
+objectclass: posixGroup
+objectclass: groupofnames
+gidNumber: 70000007
+member: uid=knoxuser,ou=Users,dc=hortonworks,dc=com
+
